@@ -1,0 +1,41 @@
+from cs50 import get_string
+
+
+def main():
+    text = get_string("Text: ")
+    level = grade(text)
+    if level < 1:
+        print("Before Grade 1")
+    elif level > 16:
+        print("Grade 16+")
+    else:
+        print(f"Grade {level}")
+
+
+def grade(text):
+    # Find total number of letters
+    letters = 0
+    for letter in text:
+        if (65 <= ord(letter) <= 90) or (97 <= ord(letter) <= 122):
+            letters += 1
+    letters = float(letters)
+    # Find total number of words
+    spaces = 0
+    for space in text:
+        if ord(space) == 32:
+            spaces += 1
+    words = float(spaces + 1)
+    # Find total number of sentences
+    sentences = 0
+    for sentence in text:
+        if ord(sentence) == 33 or ord(sentence) == 46 or ord(sentence) == 63:
+            sentences += 1
+    sentences = float(sentences)
+    L = 100.0 * letters / words
+    S = 100.0 * sentences / words
+    index = 0.0588 * L - 0.296 * S - 15.8
+    index = round(index)
+    return index
+
+
+main()
