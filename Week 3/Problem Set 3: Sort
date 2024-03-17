@@ -1,0 +1,11 @@
+sort1 uses: bubble sort
+
+How do you know?: It took 5.635s to sort random and much shorter 0.503s to sort sorted, suggesting it is O(n^2) and omega(n).
+
+sort2 uses: merge sort
+
+How do you know?: It look 0.607s to sort random and 0.449s to sort sorted, suggesting it is O(nlogn) and omega(nlogn).
+
+sort3 uses: selection sort
+
+How do you know?: It look 2.503s to sort random and 2.322s to sort sorted, suggesting it is O(n^2) and omega(n^2).
