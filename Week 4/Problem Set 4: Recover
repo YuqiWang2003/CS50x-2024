@@ -1,0 +1,71 @@
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define BLOCK_SIZE 512
+
+int main(int argc, char *argv[])
+{
+    // Accept a single command-line argument
+    if (argc != 2)
+    {
+        printf("Usage: ./recover FILE\n");
+        return 1;
+    }
+
+    // Open the memory card
+    char *file = argv[1];
+    FILE *card = fopen(argv[1], "r");
+    if (card == NULL)
+    {
+        printf("File cannot be opened for reading.\n");
+        return 1;
+    }
+    // set outfile pointer to NULL
+    FILE *outptr = NULL;
+
+    // buffer to store data from jpg
+    uint8_t buffer[BLOCK_SIZE];
+
+    // count amount of jpeg files found
+    int jpeg_count = 0;
+
+    // string to hold a filename
+    char filename[8] = {0};
+
+    // read memory card until the end of file
+    while (fread(buffer, sizeof(uint8_t) * 512, 1, card) == 1)
+    {
+        // check if jpeg is found
+        if (buffer[0] == 0xff && buffer[1] == 0xd8 && buffer[2] == 0xff &&
+            (buffer[3] & 0xf0) == 0xe0)
+        {
+            // close outptr if jpeg was found before and write into ###.jpg
+            if (outptr != NULL)
+            {
+                fclose(outptr);
+            }
+            sprintf(filename, "%03i.jpg", jpeg_count++);
+
+            // open a new outptr for writing the new found jpeg
+            outptr = fopen(filename, "w");
+        }
+
+        // if new jpeg is not found, keep writing to jpeg file
+        if (outptr != NULL)
+        {
+            fwrite(buffer, sizeof(uint8_t) * 512, 1, outptr);
+        }
+    }
+
+    // close last opened outptr
+    if (outptr != NULL)
+    {
+        fclose(outptr);
+    }
+
+    // close input file
+    fclose(card);
+
+    return 0;
+}
